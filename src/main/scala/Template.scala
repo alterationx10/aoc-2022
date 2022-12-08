@@ -5,7 +5,7 @@ object Template extends ZIOAppDefault {
 
   val source: String => ZStream[Any, Throwable, String] =
     fileName =>
-      ZStream.fromFileName(fileName).via(ZPipeline.utfDecode) ++ ZStream("\n\n")
+      ZStream.fromFileName(fileName).via(ZPipeline.utfDecode >>> ZPipeline.splitLines)
 
 
   val data = ""
