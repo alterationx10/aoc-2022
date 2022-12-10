@@ -12,11 +12,7 @@ object DoomsDay extends ZIOAppDefault {
     Array("🫐", "🫐", "🫐")
   )
 
-  /** Given [[simpleMatrix]], will return:
-    * Transpose:
-    *  🍒,🍋,🫐
-    *  🍒,🍋,🫐
-    *  🍒,🍋,🫐
+  /** Given [[simpleMatrix]], will return: Transpose: 🍒,🍋,🫐 🍒,🍋,🫐 🍒,🍋,🫐
     *
     * @param m
     * @tparam A
@@ -30,11 +26,8 @@ object DoomsDay extends ZIOAppDefault {
     }
   }
 
-  /** Given [[simpleMatrix]], will return:
-    * Reverse Rows:
-    *  🍒,🍒,🍒
-    *  🍋,🍋,🍋
-    *  🫐,🫐,🫐
+  /** Given [[simpleMatrix]], will return: Reverse Rows: 🍒,🍒,🍒 🍋,🍋,🍋
+    * 🫐,🫐,🫐
     *
     * @param m
     * @tparam A
@@ -43,11 +36,8 @@ object DoomsDay extends ZIOAppDefault {
   private def reverseRows[A: ClassTag](m: Array[Array[A]]): Array[Array[A]] =
     m.map(_.reverse)
 
-  /** Given [[simpleMatrix]], will return:
-    * Reverse Cols.:
-    *  🫐,🫐,🫐
-    *  🍋,🍋,🍋
-    *  🍒,🍒,🍒
+  /** Given [[simpleMatrix]], will return: Reverse Cols.: 🫐,🫐,🫐 🍋,🍋,🍋
+    * 🍒,🍒,🍒
     *
     * @param m
     * @tparam A
@@ -63,11 +53,8 @@ object DoomsDay extends ZIOAppDefault {
     }
   }
 
-  /** Given [[simpleMatrix]], will return:
-    * Rotate Clockwise:
-    *  🫐,🍋,🍒
-    *  🫐,🍋,🍒
-    *  🫐,🍋,🍒
+  /** Given [[simpleMatrix]], will return: Rotate Clockwise: 🫐,🍋,🍒 🫐,🍋,🍒
+    * 🫐,🍋,🍒
     *
     * @param arr
     * @param clockWise
@@ -92,30 +79,14 @@ object DoomsDay extends ZIOAppDefault {
         .via(ZPipeline.utfDecode >>> ZPipeline.splitLines)
         .filter(_.nonEmpty)
 
-  /** Our *clean* data should have n m-x-m matrices.
-    * That means each row has m elements, and n*m rows.
+  /** Our *clean* data should have n m-x-m matrices. That means each row has m
+    * elements, and n*m rows.
     *
-    * Given:
-    *  🍒 🍒 🍒
-    *  🍋 🍋 🍋
-    *  🫐 🫐 🫐
-    *  🍒 🍒 🍒
-    *  🍋 🍋 🍋
-    *  🫐 🫐 🫐
-    *  🍒 🍒 🍒
-    *  🍋 🍋 🍋
-    *  🫐 🫐 🫐
+    * Given: 🍒 🍒 🍒 🍋 🍋 🍋 🫐 🫐 🫐 🍒 🍒 🍒 🍋 🍋 🍋 🫐 🫐 🫐 🍒 🍒 🍒 🍋
+    * 🍋 🍋 🫐 🫐 🫐
     *
-    *  Will output:
-    *  🫐 🍋 🍒
-    *  🫐 🍋 🍒
-    *  🫐 🍋 🍒
-    *  🫐 🍋 🍒
-    *  🫐 🍋 🍒
-    *  🫐 🍋 🍒
-    *  🫐 🍋 🍒
-    *  🫐 🍋 🍒
-    *  🫐 🍋 🍒
+    * Will output: 🫐 🍋 🍒 🫐 🍋 🍒 🫐 🍋 🍒 🫐 🍋 🍒 🫐 🍋 🍒 🫐 🍋 🍒 🫐 🍋
+    * 🍒 🫐 🍋 🍒 🫐 🍋 🍒
     *
     * @return
     */
@@ -123,17 +94,17 @@ object DoomsDay extends ZIOAppDefault {
   override def run: ZIO[Any, Any, Any] =
     for {
       m <- source("doomsday.data")
-        .take(1)
-        .map(_.split(" ").length)
-        .run(ZSink.sum)
-        .debug("m")
+             .take(1)
+             .map(_.split(" ").length)
+             .run(ZSink.sum)
+             .debug("m")
       _ <- source("doomsday.data")
-        .map(_.split(" "))
-        .grouped(m)
-        .map(chunk => rotateArray(chunk.toArray))
-        .tap(arr =>
-          Console.printLine(arr.map(_.mkString(" ")).mkString("\n"))
-        ) // Just for pretty-printing
-        .runDrain
+             .map(_.split(" "))
+             .grouped(m)
+             .map(chunk => rotateArray(chunk.toArray))
+             .tap(arr =>
+               Console.printLine(arr.map(_.mkString(" ")).mkString("\n"))
+             ) // Just for pretty-printing
+             .runDrain
     } yield ExitCode.success
 }

@@ -31,7 +31,7 @@ object Day7 extends ZIOAppDefault {
       ElfFS(List.empty, List.empty, List.empty)
   }
 
-  extension(efs: ElfFS) {
+  extension (efs: ElfFS) {
 
     // Add a directory, if we haven't seen it before
     def mkDirectoryIfNotExists(dir: String): ElfFS = {
@@ -55,7 +55,7 @@ object Day7 extends ZIOAppDefault {
 
     // Process the input
     def process(line: String): ElfFS = line match {
-      case s"$$ cd $path" =>
+      case s"$$ cd $path"   =>
         path match {
           case ".." => efs.copy(currentPath = efs.currentPath.dropRight(1))
           case _    => efs.copy(currentPath = efs.currentPath :+ path)
@@ -80,11 +80,11 @@ object Day7 extends ZIOAppDefault {
     }
 
     def findMinFolderSize: Long = {
-      val capacity: Long = 70000000
+      val capacity: Long    = 70000000
       val spaceNeeded: Long = 30000000
-      val totalUsed = efs.files.map(_.size).sum
-      val unused = capacity - totalUsed
-      val needToDelete = spaceNeeded - unused
+      val totalUsed         = efs.files.map(_.size).sum
+      val unused            = capacity - totalUsed
+      val needToDelete      = spaceNeeded - unused
 
       efs.dirs
         .map(sumFilesUnder)
@@ -94,17 +94,17 @@ object Day7 extends ZIOAppDefault {
 
   }
 
-  val data = "day-7.data"
+  val data                               = "day-7.data"
   override def run: ZIO[Scope, Any, Any] = for {
     elfRef <- FiberRef.make(ElfFS())
-    _ <- source(data)
-      .foreach(line => elfRef.getAndUpdate(efs => efs.process(line)))
-    _ <- elfRef.get
-      .map(efs => efs.sumResult(100000))
-      .debug("Answer pt.1")
-    _ <- elfRef.get
-      .map(_.findMinFolderSize)
-      .debug("Answer pt.2")
+    _      <- source(data)
+                .foreach(line => elfRef.getAndUpdate(efs => efs.process(line)))
+    _      <- elfRef.get
+                .map(efs => efs.sumResult(100000))
+                .debug("Answer pt.1")
+    _      <- elfRef.get
+                .map(_.findMinFolderSize)
+                .debug("Answer pt.2")
   } yield ExitCode.success
 
 }

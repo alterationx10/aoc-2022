@@ -19,7 +19,7 @@ object Day1 extends ZIOAppDefault {
           if (elem.nonEmpty) (state :+ elem, Chunk.empty)
           else (Chunk.empty, state)
         }
-        //Get rid of empty Chunks
+        // Get rid of empty Chunks
         .filter(_.nonEmpty) >>>
       // Add up the inner Chunk
       ZPipeline.map[Chunk[String], Int](_.map(_.toInt).sum)
@@ -31,16 +31,16 @@ object Day1 extends ZIOAppDefault {
   // Sum of biggest 3
   val pt2Sink: ZSink[Any, Nothing, Int, Nothing, Int] =
     ZSink.collectAll[Int].map(_.sortBy(-_).take(3).sum)
-  
+
   override def run: ZIO[Any, Any, Any] = for {
     _ <- source("day-1-1.data")
-      .via(pt1Pipeline)
-      .run(pt1Sink)
-      .debug("Answer pt.1")
+           .via(pt1Pipeline)
+           .run(pt1Sink)
+           .debug("Answer pt.1")
     _ <- source("day-1-1.data")
-      .via(pt1Pipeline)
-      .run(pt2Sink)
-      .debug("Answer pt.2")
+           .via(pt1Pipeline)
+           .run(pt2Sink)
+           .debug("Answer pt.2")
   } yield ExitCode.success
 
 }

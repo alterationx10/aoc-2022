@@ -6,8 +6,8 @@ object Day2 extends ZIOAppDefault {
   sealed trait RPS
   object RPS {
 
-    case object Rock extends RPS
-    case object Paper extends RPS
+    case object Rock     extends RPS
+    case object Paper    extends RPS
     case object Scissors extends RPS
 
     def apply(s: String): RPS = s match {
@@ -17,13 +17,13 @@ object Day2 extends ZIOAppDefault {
       case _         => throw new RuntimeException("That's cheating!")
     }
 
-    extension(rps: RPS) {
+    extension (rps: RPS) {
       def losesTo: RPS = rps match {
         case Rock     => Paper
         case Paper    => Scissors
         case Scissors => Rock
       }
-      def winsAgainst = rps match {
+      def winsAgainst  = rps match {
         case Rock     => Scissors
         case Paper    => Rock
         case Scissors => Paper
@@ -31,12 +31,12 @@ object Day2 extends ZIOAppDefault {
     }
 
     def score(a: RPS, b: RPS): Int = {
-      val choice = b match {
+      val choice        = b match {
         case Rock     => 1
         case Paper    => 2
         case Scissors => 3
       }
-      val outcome = (a, b) match {
+      val outcome       = (a, b) match {
         case (x, y) if x == y            => 3 // Draw
         case (x, Rock) if x == Scissors  => 6 // Winner
         case (x, Paper) if x == Rock     => 6 // Winner
@@ -53,8 +53,8 @@ object Day2 extends ZIOAppDefault {
 
     def throwTheGame(a: RPS, b: RPS): Int = (a, b) match {
       case (x, Rock)     => score(x, x.winsAgainst) // Need to lose
-      case (x, Paper)    => score(x, x) // Need to tie
-      case (x, Scissors) => score(x, x.losesTo) // Need to win
+      case (x, Paper)    => score(x, x)             // Need to tie
+      case (x, Scissors) => score(x, x.losesTo)     // Need to win
     }
 
   }
@@ -78,16 +78,16 @@ object Day2 extends ZIOAppDefault {
 
   val scoreSink: ZSink[Any, Nothing, Int, Nothing, Int] = ZSink.sum[Int]
 
-  val data = "day-2-1.data"
+  val data                             = "day-2-1.data"
   override def run: ZIO[Any, Any, Any] = for {
     _ <- source(data)
-      .via(pt1Pipeline)
-      .run(scoreSink)
-      .debug("Answer pt.1")
+           .via(pt1Pipeline)
+           .run(scoreSink)
+           .debug("Answer pt.1")
     _ <- source(data)
-      .via(pt2Pipeline)
-      .run(scoreSink)
-      .debug("Answer pt.2")
+           .via(pt2Pipeline)
+           .run(scoreSink)
+           .debug("Answer pt.2")
   } yield ExitCode.success
 
 }

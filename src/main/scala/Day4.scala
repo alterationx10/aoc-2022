@@ -28,7 +28,7 @@ object Day4 extends ZIOAppDefault {
       (elves.head, elves.last)
     }
 
-    extension(workers: (ElfJanitor, ElfJanitor)) {
+    extension (workers: (ElfJanitor, ElfJanitor)) {
       // Indicates if an Elf is redundant, and the index of which one is, if any.
       def redundant: Option[Int] =
         (workers._1.assignedTo.toSet, workers._2.assignedTo.toSet) match {
@@ -37,7 +37,7 @@ object Day4 extends ZIOAppDefault {
           case _                       => None
         }
       // Indicates if there is any overlap to assigned work
-      def overlap: Boolean =
+      def overlap: Boolean       =
         (workers._1.assignedTo.toSet, workers._2.assignedTo.toSet) match {
           case (a, b) if a.union(b).size < a.size + b.size => true
           case _                                           => false
@@ -46,18 +46,18 @@ object Day4 extends ZIOAppDefault {
 
   }
 
-  val data = "day-4-1.data"
+  val data                             = "day-4-1.data"
   override def run: ZIO[Any, Any, Any] = for {
     _ <- source(data)
-      .map(ElfJanitor.apply)
-      .filter(_.redundant.isDefined)
-      .run(ZSink.count)
-      .debug("Answer Pt.1")
+           .map(ElfJanitor.apply)
+           .filter(_.redundant.isDefined)
+           .run(ZSink.count)
+           .debug("Answer Pt.1")
     _ <- source(data)
-      .map(ElfJanitor.apply)
-      .filter(_.overlap)
-      .run(ZSink.count)
-      .debug("Answer Pt.2")
+           .map(ElfJanitor.apply)
+           .filter(_.overlap)
+           .run(ZSink.count)
+           .debug("Answer Pt.2")
   } yield ExitCode.success
 
 }
